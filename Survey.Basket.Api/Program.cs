@@ -1,6 +1,12 @@
 
-using Survey.Basket.Api.Middelwares;
-using Survey.Basket.Api.test;
+using Microsoft.EntityFrameworkCore;
+using Survey.Basket.Api.Data;
+using Survey.Basket.Api.Extentions;
+using Survey.Basket.Api.Servises;
+using System.Configuration;
+
+using System.Reflection;
+
 
 namespace Survey.Basket.Api
 {
@@ -17,11 +23,34 @@ namespace Survey.Basket.Api
             webApplicationBuilder.Services.AddEndpointsApiExplorer();
             webApplicationBuilder.Services.AddSwaggerGen();
 
-            webApplicationBuilder.Services.AddKeyedScoped<IoperationOS, Windos>("Win");
-            webApplicationBuilder.Services.AddKeyedScoped<IoperationOS, IOS>("ios");
+            var connection = webApplicationBuilder.Configuration.GetConnectionString("DefultConnection") ??
+                     throw new InvalidOperationException("NOT FOUND 'DefultConnection' THE CONNECTION");
+            webApplicationBuilder.Services.AddDbContext<ApplicationDbcontext>(options => 
+            {
+                options.UseSqlServer();
+            });
+            webApplicationBuilder.Services.AddApplicationServices(); //User Defined 
+
 
             var app = webApplicationBuilder.Build();
 
+            var scope = app.Services.CreateScope();
+            var servises = scope.ServiceProvider;
+
+      using var dbcontext =   servises.GetRequiredService<ApplicationDbcontext>();
+
+            try
+            {
+                dbcontext.Database.Migrate();
+
+            }
+            catch (Exception ex )
+            {
+
+              var Logger =  app.Logger;
+
+                Logger.LogError(string.Empty, ex.Message);
+            }
            
 
             // Configure the HTTP request pipeline.
