@@ -10,9 +10,9 @@ namespace Survey.Basket.Api.Data.Entites
 
         public bool IsPublished { get; set; }
 
-        public DateTime StartsAt { get; set; }
+        public DateOnly StartsAt { get; set; }
 
-        public DateTime EndsAt { get; set; }
+        public DateOnly EndsAt { get; set; }
 
     }
 }

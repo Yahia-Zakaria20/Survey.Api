@@ -6,9 +6,17 @@ namespace Survey.Basket.Api.Data.Configrations
 {
     public class PollConfigrations : IEntityTypeConfiguration<Poll>
     {
-        public void Configure(EntityTypeBuilder<Poll> builder)
+        public void Configure(EntityTypeBuilder<Poll> Entite)
         {
-            throw new NotImplementedException();
+            Entite.HasIndex(p => p.Titel)
+                .IsUnique();
+
+            Entite.Property(p => p.Titel)
+                .HasMaxLength(100);
+
+               Entite.Property(p => p.Summary)
+                .HasMaxLength(1500);
+              
         }
     }
 }

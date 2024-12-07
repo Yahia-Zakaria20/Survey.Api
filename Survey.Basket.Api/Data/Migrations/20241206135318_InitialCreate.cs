@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Survey.Basket.Api.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CreatePollsEntite : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,13 +17,22 @@ namespace Survey.Basket.Api.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Titel = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Titel = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Summary = table.Column<string>(type: "nvarchar(1500)", maxLength: 1500, nullable: false),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false),
+                    StartsAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndsAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Polls", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Polls_Titel",
+                table: "Polls",
+                column: "Titel",
+                unique: true);
         }
 
         /// <inheritdoc />

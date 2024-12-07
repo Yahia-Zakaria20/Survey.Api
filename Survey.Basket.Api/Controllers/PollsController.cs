@@ -3,6 +3,7 @@ using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Survey.Basket.Api.Data;
 using Survey.Basket.Api.Data.Entites;
 using Survey.Basket.Api.Dto;
@@ -23,16 +24,17 @@ namespace Survey.Basket.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IReadOnlyList<Poll>> GetAll()
+        public async Task<ActionResult<IReadOnlyList<Poll>>> GetAll(CancellationToken cancellation)
         {
-            
-            return Ok( _service.GetAllAsync().Adapt<IEnumerable<PollDto>>());
+            var result =await _service.GetAllAsync(cancellation);
+
+            return Ok(result.Adapt<IReadOnlyList<PollDto>>());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Poll>> GetById([FromRoute]int id) 
+        public async Task<ActionResult<Poll>> GetById([FromRoute]int id,CancellationToken cancellation) 
         {
-            var poll = await _service.GetbyIdAsync(id);
+            var poll = await _service.GetbyIdAsync(id,cancellation);
 
           
 
@@ -40,39 +42,49 @@ namespace Survey.Basket.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddPoll([FromBody]PollDto poll) 
+        public async Task<ActionResult> AddPoll([FromBody]PollDto poll,CancellationToken cancellation) 
         {
             //  return await  _service.AddPollAsync(poll) > 0 ? Ok() : BadRequest();
         
             
-              var newpoll  =   await _service.AddPollAsync(poll.Adapt<Poll>());
+              var newpoll  =   await _service.AddPollAsync(poll.Adapt<Poll>(),cancellation);
             
 
             return newpoll != null ? CreatedAtAction(nameof(GetById),new {id = newpoll.Id}, newpoll.Adapt<PollDto>()) : BadRequest() ;
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Poll>> Update([FromRoute]int id,[FromBody] PollDto poll) 
+        public async Task<ActionResult<Poll>> Update([FromRoute]int id,[FromBody] PollDto poll,CancellationToken cancellation) 
         {
             if (id.Equals(poll.Id))
             {
-                var result = await _service.UpdateAsync(id, poll.Adapt<Poll>());
-                if (result > 0)
+                var result = await _service.UpdateAsync(id, poll.Adapt<Poll>(),cancellation);
+                if (result)
                     return NoContent();
             }
             return BadRequest();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Poll>> Delete([FromRoute]int id)
+        public async Task<ActionResult<Poll>> Delete([FromRoute]int id,CancellationToken cancellation)
         {
-            var result = await _service.DeleteAsync(id);
-            if (result > 0)
+            var result = await _service.DeleteAsync(id,cancellation);
+            if (result)
                 return NoContent();
 
             return BadRequest();
 
         }
-        
+
+        [HttpPut("{id}/ToggleStatus")]
+        public async Task<ActionResult<Poll>> ToggleStatus([FromRoute] int id, CancellationToken cancellation)
+        {  
+                var result = await _service.ToggleSatutsAsync(id,cancellation);
+                if (result)
+                    return NoContent();
+            
+            return BadRequest();
+        }
+
     }
 }

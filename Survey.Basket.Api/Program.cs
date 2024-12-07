@@ -24,10 +24,10 @@ namespace Survey.Basket.Api
             webApplicationBuilder.Services.AddSwaggerGen();
 
             var connection = webApplicationBuilder.Configuration.GetConnectionString("DefultConnection") ??
-                     throw new InvalidOperationException("NOT FOUND 'DefultConnection' THE CONNECTION");
+                     throw new InvalidOperationException("Connection String 'DefultConnection' Not Found");
             webApplicationBuilder.Services.AddDbContext<ApplicationDbcontext>(options => 
             {
-                options.UseSqlServer();
+                options.UseSqlServer(connection);
             });
             webApplicationBuilder.Services.AddApplicationServices(); //User Defined 
 

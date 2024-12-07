@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Survey.Basket.Api.Data.Entites;
+using System.Reflection;
 
 namespace Survey.Basket.Api.Data
 {
@@ -10,10 +11,10 @@ namespace Survey.Basket.Api.Data
         {
             
         }
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.ApplyConfiguration(new PollConfigrations());
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
 
         public DbSet<Poll> Polls { get; set; }
     }

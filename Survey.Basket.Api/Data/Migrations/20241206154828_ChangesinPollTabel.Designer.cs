@@ -12,15 +12,15 @@ using Survey.Basket.Api.Data;
 namespace Survey.Basket.Api.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbcontext))]
-    [Migration("20241109113533_test")]
-    partial class test
+    [Migration("20241206154828_ChangesinPollTabel")]
+    partial class ChangesinPollTabel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -33,18 +33,29 @@ namespace Survey.Basket.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DateoFBirth")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("EndsAt")
+                        .HasColumnType("date");
 
-                    b.Property<string>("Description")
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly>("StartsAt")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Summary")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
 
                     b.Property<string>("Titel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Titel")
+                        .IsUnique();
 
                     b.ToTable("Polls");
                 });

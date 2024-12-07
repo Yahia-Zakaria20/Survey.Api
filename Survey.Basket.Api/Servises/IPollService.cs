@@ -5,18 +5,17 @@ namespace Survey.Basket.Api.Servises
 {
     public interface IPollService
     {
-        public Task<IReadOnlyList<Poll>> GetAllAsync();
+        public Task<IReadOnlyList<Poll>> GetAllAsync(CancellationToken cancellation = default);
 
-        public Task<Poll?> GetbyIdAsync(int id);
+        public Task<Poll?> GetbyIdAsync(int id, CancellationToken cancellation = default);
 
-        public Task<Poll?> AddPollAsync(Poll poll);
+        public Task<Poll?> AddPollAsync(Poll poll, CancellationToken cancellation = default);
 
-        public Task<Poll?> SearchByNameAsync(string name);
+        public Task<bool> UpdateAsync(int id,Poll poll, CancellationToken cancellation = default);
 
-        public Task<int> UpdateAsync(int id,Poll poll);
+        public Task<bool> DeleteAsync(int id, CancellationToken cancellation = default);
+        public Task<bool> ToggleSatutsAsync(int id, CancellationToken cancellation = default);
 
-        public Task<int> DeleteAsync(int id);
 
-        public Task<int> CountAsync();
     }
 }
