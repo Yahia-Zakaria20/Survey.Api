@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Survey.Basket.Api.Data;
+using Survey.Basket.Api.Data.Entites;
 using Survey.Basket.Api.Extentions;
 using Survey.Basket.Api.Servises;
 using System.Configuration;
@@ -23,6 +24,7 @@ namespace Survey.Basket.Api
             webApplicationBuilder.Services.AddEndpointsApiExplorer();
             webApplicationBuilder.Services.AddSwaggerGen();
 
+         
             var connection = webApplicationBuilder.Configuration.GetConnectionString("DefultConnection") ??
                      throw new InvalidOperationException("Connection String 'DefultConnection' Not Found");
             webApplicationBuilder.Services.AddDbContext<ApplicationDbcontext>(options => 
@@ -64,7 +66,7 @@ namespace Survey.Basket.Api
 
             app.UseAuthorization();
 
-     
+         
             app.MapControllers();
 
             app.Run();
