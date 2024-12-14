@@ -7,58 +7,61 @@ using Microsoft.Extensions.Options;
 using Survey.Basket.Api.Data;
 using Survey.Basket.Api.Data.Entites;
 using Survey.Basket.Api.Dto;
-using Survey.Basket.Api.Servises;
+using Survey.Basket.Api.Servises.Polls;
 
 namespace Survey.Basket.Api.Controllers
 {
 
     public class PollsController : BaseApiController
     {
-        
-        private readonly IPollService _service;
 
-        public PollsController(IPollService service)
+        private readonly IPollService _service;
+        private readonly IConfiguration _configuration;
+
+        public PollsController(IPollService service,
+            IConfiguration configuration)
         {
-         
-           _service = service;
+
+            _service = service;
+            _configuration = configuration;
         }
 
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<Poll>>> GetAll(CancellationToken cancellation)
         {
-            var result =await _service.GetAllAsync(cancellation);
+            var result = await _service.GetAllAsync(cancellation);
 
             return Ok(result.Adapt<IReadOnlyList<PollDto>>());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Poll>> GetById([FromRoute]int id,CancellationToken cancellation) 
+        public async Task<ActionResult<Poll>> GetById([FromRoute] int id, CancellationToken cancellation)
         {
-            var poll = await _service.GetbyIdAsync(id,cancellation);
+            var poll = await _service.GetbyIdAsync(id, cancellation);
 
-          
 
-            return poll is null ? NotFound() : Ok(poll); 
+
+            return poll is null ? NotFound() : Ok(poll);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddPoll([FromBody]PollDto poll,CancellationToken cancellation) 
+        public async Task<ActionResult> AddPoll([FromBody] PollDto poll, CancellationToken cancellation)
         {
             //  return await  _service.AddPollAsync(poll) > 0 ? Ok() : BadRequest();
-        
-            
-              var newpoll  =   await _service.AddPollAsync(poll.Adapt<Poll>(),cancellation);
-            
 
-            return newpoll != null ? CreatedAtAction(nameof(GetById),new {id = newpoll.Id}, newpoll.Adapt<PollDto>()) : BadRequest() ;
+
+            var newpoll = await _service.AddPollAsync(poll.Adapt<Poll>(), cancellation);
+
+
+            return newpoll != null ? CreatedAtAction(nameof(GetById), new { id = newpoll.Id }, newpoll.Adapt<PollDto>()) : BadRequest();
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Poll>> Update([FromRoute]int id,[FromBody] PollDto poll,CancellationToken cancellation) 
+        public async Task<ActionResult<Poll>> Update([FromRoute] int id, [FromBody] PollDto poll, CancellationToken cancellation)
         {
             if (id.Equals(poll.Id))
             {
-                var result = await _service.UpdateAsync(id, poll.Adapt<Poll>(),cancellation);
+                var result = await _service.UpdateAsync(id, poll.Adapt<Poll>(), cancellation);
                 if (result)
                     return NoContent();
             }
@@ -66,9 +69,9 @@ namespace Survey.Basket.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Poll>> Delete([FromRoute]int id,CancellationToken cancellation)
+        public async Task<ActionResult<Poll>> Delete([FromRoute] int id, CancellationToken cancellation)
         {
-            var result = await _service.DeleteAsync(id,cancellation);
+            var result = await _service.DeleteAsync(id, cancellation);
             if (result)
                 return NoContent();
 
@@ -78,13 +81,14 @@ namespace Survey.Basket.Api.Controllers
 
         [HttpPut("{id}/ToggleStatus")]
         public async Task<ActionResult<Poll>> ToggleStatus([FromRoute] int id, CancellationToken cancellation)
-        {  
-                var result = await _service.ToggleSatutsAsync(id,cancellation);
-                if (result)
-                    return NoContent();
-            
+        {
+            var result = await _service.ToggleSatutsAsync(id, cancellation);
+            if (result)
+                return NoContent();
+
             return BadRequest();
         }
 
+     
     }
 }
