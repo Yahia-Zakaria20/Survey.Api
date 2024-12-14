@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Survey.Basket.Api.Data.Entites;
+using Survey.Basket.Api.Helper;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -9,6 +11,12 @@ namespace Survey.Basket.Api.Services.Jwt
 {
     public class JwtServices : IJwtServices
     {
+        private readonly JwtOptions _jwtoptions;
+
+        public JwtServices(IOptions<JwtOptions> jwtoptions)
+        {
+            _jwtoptions = jwtoptions.Value;
+        }
         public (string Token, int Expirein) GenerateToKen(ApplicationUser user)
         {
             //RegisterClaims And Roles to know what his access in App
@@ -25,20 +33,22 @@ namespace Survey.Basket.Api.Services.Jwt
 
             //Cohice the Key 
 
-            var SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-256-bit-secretStroNGKAutHENTICATIONKEy"));
+            var SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtoptions.SecurityKey));
 
-            var expirein = 30;
+            
 
-            var TokenObj = new JwtSecurityToken(
+            var TokenObj = new JwtSecurityToken
+                (
                           //Register Claims
-                          audience: "SurveyBasket-Users",
-                          issuer: "SurveyBasket",
-                          expires: DateTime.UtcNow.AddMinutes(expirein),
+                          audience: _jwtoptions.audience,
+                          issuer: _jwtoptions.issuer,
+                          expires: DateTime.UtcNow.AddMinutes(_jwtoptions.expires),
                           claims: Clamis,
                           signingCredentials: new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256Signature)
-                          );
+                );
 
-            return (Token: new JwtSecurityTokenHandler().WriteToken(TokenObj) , Expirein: expirein);
+
+            return (Token: new JwtSecurityTokenHandler().WriteToken(TokenObj) , Expirein: _jwtoptions.expires * 60);
 
             
         }

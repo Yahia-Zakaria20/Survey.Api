@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Survey.Basket.Api.Dto;
+using Survey.Basket.Api.Helper;
 using Survey.Basket.Api.Servises.Auth;
 
 namespace Survey.Basket.Api.Controllers
@@ -13,10 +15,13 @@ namespace Survey.Basket.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthServices _authServices;
+        private readonly JwtOptions jwtOptions;
 
-        public AuthController(IAuthServices authServices)
+        public AuthController(IAuthServices authServices
+            ,IOptions<JwtOptions> JwtOptions)
         {
             _authServices = authServices;
+            jwtOptions = JwtOptions.Value;
         }
 
         [HttpPost]
@@ -26,7 +31,7 @@ namespace Survey.Basket.Api.Controllers
 
             return Result is null ?BadRequest() : Ok(Result);
         }
-
+    
      
     }
 }

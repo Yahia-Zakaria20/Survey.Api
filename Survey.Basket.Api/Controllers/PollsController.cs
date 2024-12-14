@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,16 @@ using Survey.Basket.Api.Servises.Polls;
 namespace Survey.Basket.Api.Controllers
 {
 
+    [Authorize]
     public class PollsController : BaseApiController
     {
 
         private readonly IPollService _service;
-        private readonly IConfiguration _configuration;
 
-        public PollsController(IPollService service,
-            IConfiguration configuration)
+        public PollsController(IPollService service)
         {
 
             _service = service;
-            _configuration = configuration;
         }
 
         [HttpGet]

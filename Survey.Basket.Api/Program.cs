@@ -31,7 +31,7 @@ namespace Survey.Basket.Api
             {
                 options.UseSqlServer(connection);
             });
-            webApplicationBuilder.Services.AddApplicationServices(); //User Defined 
+            webApplicationBuilder.Services.AddApplicationServices(webApplicationBuilder.Configuration); //User Defined 
 
 
             var app = webApplicationBuilder.Build();

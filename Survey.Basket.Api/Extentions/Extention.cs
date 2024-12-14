@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Survey.Basket.Api.Services.Jwt;
+using Survey.Basket.Api.Helper;
 
 namespace Survey.Basket.Api.Extentions
 {
@@ -28,19 +29,19 @@ namespace Survey.Basket.Api.Extentions
             services.AddSingleton<IMapper>(new Mapper(GlobalSettings));
 
         }
-        public static void AddApplicationServices(this IServiceCollection services) 
+        public static void AddApplicationServices(this IServiceCollection services , IConfiguration configuration) 
         {
             services.AddScoped<IPollService, PollService>();
 
            services.AddMapsterServices(); //User Defined 
 
-            services.AddAuthServices();
+            services.AddAuthServices(configuration);
 
            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                   .AddFluentValidationAutoValidation();
         }
 
-        public static void AddAuthServices(this IServiceCollection services)
+        public static void AddAuthServices(this IServiceCollection services,IConfiguration configuration)
         {
             services.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationDbcontext>();
@@ -49,7 +50,15 @@ namespace Survey.Basket.Api.Extentions
 
             services.AddSingleton<IJwtServices, JwtServices>();
 
+            //  services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName)); // With No Validation on values in Appsettings
 
+            services.AddOptions<JwtOptions>()
+                .BindConfiguration(JwtOptions.SectionName)
+               .ValidateDataAnnotations()
+               .ValidateOnStart();
+
+
+            var jwtoptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>(); //GetGroupe "Jwt" And Bind It in 'JwtOptions(UserDefined)'
             services.AddAuthentication(options =>  //JWT Configration 
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -63,10 +72,10 @@ namespace Survey.Basket.Api.Extentions
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("StroNGKAutHENTICATIONKEy")),
-                    ValidIssuer = "SurveyBasket",
-                    ValidAudience = "SurveyBasket-Users",
-                    ClockSkew = TimeSpan.FromMinutes(30)
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtoptions!.SecurityKey)),
+                    ValidIssuer = jwtoptions!.issuer,
+                    ValidAudience = jwtoptions!.audience,
+                    ClockSkew = TimeSpan.FromMinutes(jwtoptions.expires)
                 };
             });
 
