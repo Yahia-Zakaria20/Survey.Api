@@ -13,5 +13,9 @@
         public string Token { get; set; } = string.Empty;
 
         public int Expirein { get; set; }
+
+        public string RefreshToke { get; set; } = string.Empty;
+
+        public DateTime RefreshTokenExpiration { get; set; }
     }
 }

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Survey.Basket.Api.Dto;
+using Survey.Basket.Api.Helper;
 using Survey.Basket.Api.Servises.Auth;
 
 namespace Survey.Basket.Api.Controllers
@@ -13,20 +15,39 @@ namespace Survey.Basket.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthServices _authServices;
+        private readonly JwtOptions jwtOptions;
 
-        public AuthController(IAuthServices authServices)
+        public AuthController(IAuthServices authServices
+            ,IOptions<JwtOptions> JwtOptions)
         {
             _authServices = authServices;
+            jwtOptions = JwtOptions.Value;
         }
 
         [HttpPost]
-        public async Task<ActionResult<AuthResponse>> Login(LoginDto loginDto,CancellationToken cancellation) 
+        public async Task<ActionResult<AuthResponse>> LoginAsync([FromBody]LoginDto loginDto,CancellationToken cancellation) 
         {
-          var Result =await   _authServices.LoginAsync(loginDto, cancellation);
+          var Result =await   _authServices.LoginAsync(loginDto.Email,loginDto.Password, cancellation);
 
-            return Result is null ?BadRequest() : Ok(Result);
+            return Result is null ?BadRequest("Invalid Email Or Password") : Ok(Result);
         }
 
-     
+        [HttpPost("refresh")]
+        public async Task<ActionResult<AuthResponse>> RefreshTokenAsync([FromBody]RefreshTokenDto dto, CancellationToken cancellation)
+        {
+            var Result = await _authServices.GetRefreshTokenAsync(dto.Token,dto.RefreshToken, cancellation);
+
+            return Result is null ? BadRequest("Invalid Token") : Ok(Result);
+        }
+
+        [HttpPost("revoced-refresh-token")]
+        public async Task<ActionResult> RevocedRefreshTokenAsync([FromBody] RefreshTokenDto dto, CancellationToken cancellation)
+        {
+            var Result = await _authServices.RevocedRefreshTokenAsync(dto.Token, dto.RefreshToken, cancellation);
+
+            return Result is false ? BadRequest("Opperation Failed") : Ok();
+        }
+
+
     }
 }

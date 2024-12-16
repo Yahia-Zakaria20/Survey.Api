@@ -71,7 +71,7 @@ namespace Survey.Basket.Api.Servises.Polls
         {
             var poll = await GetbyIdAsync(id, cancellation);
 
-            poll.IsPublished = !poll.IsPublished;
+            poll!.IsPublished = !poll.IsPublished;
 
             _dbcontext.Update(poll);
 
