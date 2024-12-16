@@ -52,5 +52,35 @@ namespace Survey.Basket.Api.Services.Jwt
 
             
         }
+
+        public string? ValidateJwtToken(string Token)
+        {
+            var TokenHandler = new JwtSecurityTokenHandler(); 
+            var SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtoptions.SecurityKey)); // Becouse ValidatJwtToken input it the same one generated the Firstone
+
+            try
+            {
+                TokenHandler.ValidateToken(Token, new TokenValidationParameters()
+                {
+                    IssuerSigningKey = SecurityKey,
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero // Becouse not watting 5 min after the token Expired
+                }, out SecurityToken validatedToken);
+
+                var JwtToken = (JwtSecurityToken)validatedToken;
+
+                return JwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.Sub).Value; // first Bcouse Not to be null 'claims '
+
+            }
+            catch 
+            {
+              return null;
+            }
+
+
+
+        }
     }
 }

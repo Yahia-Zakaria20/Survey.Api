@@ -8,7 +8,12 @@ namespace Survey.Basket.Api.Data.Configrations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> Entite)
         {
-           
+            Entite.OwnsMany(u => u.RefreshTokens)
+                 .ToTable("RefreshTokens")
+                 .WithOwner()
+                 .HasForeignKey("UserId");
+                
+
             Entite.Property(p => p.FirstName)
                 .HasMaxLength(100);
 
