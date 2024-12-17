@@ -9,6 +9,8 @@ using Survey.Basket.Api.Data;
 using Survey.Basket.Api.Data.Entites;
 using Survey.Basket.Api.Dto;
 using Survey.Basket.Api.Servises.Polls;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Survey.Basket.Api.Controllers
 {
@@ -47,6 +49,7 @@ namespace Survey.Basket.Api.Controllers
         public async Task<ActionResult> AddPoll([FromBody] PollDto poll, CancellationToken cancellation)
         {
             //  return await  _service.AddPollAsync(poll) > 0 ? Ok() : BadRequest();
+         var userid =  User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
 
             var newpoll = await _service.AddPollAsync(poll.Adapt<Poll>(), cancellation);
