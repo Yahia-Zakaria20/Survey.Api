@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Survey.Basket.Api.Data;
 using Survey.Basket.Api.Data.Entites;
 using Survey.Basket.Api.Extentions;
+using Survey.Basket.Api.Helper;
 using Survey.Basket.Api.Servises;
 using System.Configuration;
 
@@ -33,7 +34,7 @@ namespace Survey.Basket.Api
             });
             webApplicationBuilder.Services.AddApplicationServices(webApplicationBuilder.Configuration); //User Defined 
 
-
+          
             var app = webApplicationBuilder.Build();
 
             var scope = app.Services.CreateScope();

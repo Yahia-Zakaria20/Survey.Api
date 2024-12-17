@@ -1,9 +1,12 @@
-﻿using Microsoft.VisualBasic;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.VisualBasic;
 
 namespace Survey.Basket.Api.Data.Entites
 {
-    public class Poll:BaseEntite
+    public class Poll:AuditableEntite
     {
+        public int Id { get; set; }
+
         public string Titel { get; set; } =string.Empty;
 
         public string Summary { get; set; } = string.Empty;
@@ -14,5 +17,6 @@ namespace Survey.Basket.Api.Data.Entites
 
         public DateOnly EndsAt { get; set; }
 
+       
     }
 }

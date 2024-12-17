@@ -17,5 +17,8 @@ namespace Survey.Basket.Api.Dto
         public DateOnly StartsAt { get; set; }
 
         public DateOnly EndsAt { get; set; }
+
+
+
     }
 }
