@@ -67,7 +67,7 @@ namespace Survey.Basket.Api.Servises.Polls
             return await _dbcontext.SaveChangesAsync(cancellation) > 0;
         }
 
-        public async Task<bool> ToggleSatutsAsync(int id, CancellationToken cancellation = default)
+        public async Task<bool> TogglePublishAsync(int id, CancellationToken cancellation = default)
         {
             var poll = await GetbyIdAsync(id, cancellation);
 

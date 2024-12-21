@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ using System.Security.Claims;
 
 namespace Survey.Basket.Api.Controllers
 {
-
+   
     [Authorize]
     public class PollsController : BaseApiController
     {
@@ -81,10 +82,10 @@ namespace Survey.Basket.Api.Controllers
 
         }
 
-        [HttpPut("{id}/ToggleStatus")]
-        public async Task<ActionResult<Poll>> ToggleStatus([FromRoute] int id, CancellationToken cancellation)
+        [HttpPut("{id}/TogglePublish")]
+        public async Task<ActionResult<Poll>> TogglePublish([FromRoute] int id, CancellationToken cancellation)
         {
-            var result = await _service.ToggleSatutsAsync(id, cancellation);
+            var result = await _service.TogglePublishAsync(id, cancellation);
             if (result)
                 return NoContent();
 

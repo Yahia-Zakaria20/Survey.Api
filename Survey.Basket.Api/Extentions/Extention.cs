@@ -35,7 +35,28 @@ namespace Survey.Basket.Api.Extentions
 
            services.AddMapsterServices(); //User Defined 
 
-            services.AddAuthServices(configuration);
+            services.AddAuthServices(configuration); 
+
+
+
+            var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+            services.AddCors(options => {    //Config   TO Cors 
+                options.AddPolicy("ClientPolicy1", config =>   //user defined policy 
+                {
+                    config.WithOrigins(allowedOrigins!)
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                });
+
+                //options.AddDefaultPolicy(config =>   //defult policy 
+                //{ 
+                //    config.WithOrigins(allowedOrigins!)
+                //    .AllowAnyHeader()
+                //    .AllowAnyMethod();
+                //});
+            });
+
+
 
            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                   .AddFluentValidationAutoValidation();
@@ -50,12 +71,12 @@ namespace Survey.Basket.Api.Extentions
 
             services.AddSingleton<IJwtServices, JwtServices>();
 
-            //  services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName)); // With No Validation on values in Appsettings
+            //  services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName)); //configre to use optionspattern to section  Without Validation on values from AppsettingsFile
 
             services.AddOptions<JwtOptions>()
                 .BindConfiguration(JwtOptions.SectionName)
                .ValidateDataAnnotations()
-               .ValidateOnStart();
+               .ValidateOnStart();  // With Validation on values from AppsettingsFile
 
 
             var jwtoptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>(); //GetGroupe "Jwt" And Bind It in 'JwtOptions(UserDefined)'

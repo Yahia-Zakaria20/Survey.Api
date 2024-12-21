@@ -27,7 +27,7 @@ namespace Survey.Basket.Api.Services.Jwt
                 new Claim(JwtRegisteredClaimNames.Name, user.FirstName),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
                 new Claim(JwtRegisteredClaimNames.Sub , user.Id),// this User id 
-                new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString()), // what is it JTI
+                new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString()), // what is it JTI ? IS A Unique Id For Token 
             };
             // add Roles to get it  From  UserManager 
 

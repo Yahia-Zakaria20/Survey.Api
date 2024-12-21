@@ -14,7 +14,8 @@ namespace Survey.Basket.Api.Servises.Polls
         public Task<bool> UpdateAsync(int id, Poll poll, CancellationToken cancellation = default);
 
         public Task<bool> DeleteAsync(int id, CancellationToken cancellation = default);
-        public Task<bool> ToggleSatutsAsync(int id, CancellationToken cancellation = default);
+
+        public Task<bool> TogglePublishAsync(int id, CancellationToken cancellation = default);
 
 
     }

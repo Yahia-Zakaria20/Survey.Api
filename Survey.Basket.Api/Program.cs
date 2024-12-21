@@ -65,8 +65,9 @@ namespace Survey.Basket.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseCors("ClientPolicy");
 
+            app.UseAuthorization();
          
             app.MapControllers();
 
