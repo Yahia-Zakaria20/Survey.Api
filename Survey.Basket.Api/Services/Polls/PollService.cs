@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Survey.Basket.Api.Data;
 using Survey.Basket.Api.Data.Entites;
+using Survey.Basket.Api.Dto;
 
 namespace Survey.Basket.Api.Servises.Polls
 {
@@ -25,30 +26,35 @@ namespace Survey.Basket.Api.Servises.Polls
         }
 
 
-        public async Task<IReadOnlyList<Poll>> GetAllAsync(CancellationToken cancellation) // becouse i dont need to TRACKING FOR THIS DATA 
+        public async Task<IReadOnlyList<PollDto>> GetAllAsync(CancellationToken cancellation) // becouse i dont need to TRACKING FOR THIS DATA 
         {
             var Polls = await _dbcontext.Polls.AsNoTracking().ToListAsync(cancellation);
 
-            return Polls;
+            return Polls.Adapt<IReadOnlyList<PollDto>>();
         }
 
-        public async Task<Poll?> GetbyIdAsync(int id, CancellationToken cancellation)
+        public async Task<PollDto?> GetbyIdAsync(int id, CancellationToken cancellation)
         {
             var poll = await _dbcontext.Polls.FindAsync(id, cancellation);
 
-            return poll is not null ? poll : null;
+            var PollDto = poll.Adapt<PollDto>();
+
+            return poll is not null ?  PollDto : null;
         }
 
 
 
-        public async Task<bool> UpdateAsync(int id, Poll poll, CancellationToken cancellation)
+        public async Task<bool> UpdateAsync(int id, PollDto polldtoRequest, CancellationToken cancellation)
         {
-            var currentpoll = await GetbyIdAsync(id, cancellation);
+            var currentpoll =/* await GetbyIdAsync(id,cancellation)*/ await  _dbcontext.Polls.FindAsync(id);
+
+           //var  currentpoll =  pollDto.Adapt<Poll>();
             if (currentpoll is not null)
-                currentpoll.Titel = poll.Titel;
-            currentpoll!.Summary = poll.Summary;
-            currentpoll.StartsAt = poll.StartsAt;
-            currentpoll.EndsAt = poll.EndsAt;
+            currentpoll.Titel = polldtoRequest.Titel;
+            currentpoll!.Summary = polldtoRequest.Summary;
+            currentpoll.StartsAt = polldtoRequest.StartsAt;
+            currentpoll.EndsAt = polldtoRequest.EndsAt;
+
             _dbcontext.Polls.Update(currentpoll);
 
             return await _dbcontext.SaveChangesAsync(cancellation) > 0;
@@ -59,7 +65,7 @@ namespace Survey.Basket.Api.Servises.Polls
         public async Task<bool> DeleteAsync(int id, CancellationToken cancellation)
         {
 
-            var currentpoll = await GetbyIdAsync(id, cancellation);
+            var currentpoll = await _dbcontext.Polls.FindAsync(id);
             if (currentpoll is not null)
 
                 _dbcontext.Polls.Remove(currentpoll);
@@ -69,7 +75,7 @@ namespace Survey.Basket.Api.Servises.Polls
 
         public async Task<bool> TogglePublishAsync(int id, CancellationToken cancellation = default)
         {
-            var poll = await GetbyIdAsync(id, cancellation);
+            var poll = await _dbcontext.Polls.FindAsync(id); 
 
             poll!.IsPublished = !poll.IsPublished;
 

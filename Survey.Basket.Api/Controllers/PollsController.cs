@@ -4,13 +4,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Survey.Basket.Api.Data;
 using Survey.Basket.Api.Data.Entites;
 using Survey.Basket.Api.Dto;
+using Survey.Basket.Api.Extentions;
 using Survey.Basket.Api.Servises.Polls;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 
 namespace Survey.Basket.Api.Controllers
@@ -33,17 +36,17 @@ namespace Survey.Basket.Api.Controllers
         {
             var result = await _service.GetAllAsync(cancellation);
 
-            return Ok(result.Adapt<IReadOnlyList<PollDto>>());
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Poll>> GetById([FromRoute] int id, CancellationToken cancellation)
+        public async Task<ActionResult<PollDto>> GetById([FromRoute] int id, CancellationToken cancellation)
         {
-            var poll = await _service.GetbyIdAsync(id, cancellation);
+            var result = await _service.GetbyIdAsync(id, cancellation);
 
-
-
-            return poll is null ? NotFound() : Ok(poll);
+                if(result is null)
+                    return NotFound(); 
+            return Ok(result);
         }
 
         [HttpPost]
@@ -60,15 +63,16 @@ namespace Survey.Basket.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Poll>> Update([FromRoute] int id, [FromBody] PollDto poll, CancellationToken cancellation)
+        public async Task<ActionResult> Update([FromRoute] int id, [FromBody] PollDto poll, CancellationToken cancellation)
         {
             if (id.Equals(poll.Id))
             {
-                var result = await _service.UpdateAsync(id, poll.Adapt<Poll>(), cancellation);
-                if (result)
+                var result = await _service.UpdateAsync(id, poll, cancellation);
+                if(result)
                     return NoContent();
             }
-            return BadRequest();
+           return BadRequest();
+
         }
 
         [HttpDelete("{id}")]
@@ -92,6 +96,6 @@ namespace Survey.Basket.Api.Controllers
             return BadRequest();
         }
 
-     
+
     }
 }
