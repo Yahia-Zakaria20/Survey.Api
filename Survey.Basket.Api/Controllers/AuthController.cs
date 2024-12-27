@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Survey.Basket.Api.Dto;
+using Survey.Basket.Api.Error;
 using Survey.Basket.Api.Helper;
 using Survey.Basket.Api.Servises.Auth;
 
@@ -29,7 +30,7 @@ namespace Survey.Basket.Api.Controllers
         {
           var Result =await   _authServices.LoginAsync(loginDto.Email,loginDto.Password, cancellation);
 
-            return Result is null ?BadRequest("Invalid Email Or Password") : Ok(Result);
+            return Result is null ?BadRequest(new ApiResponse(StatusCodes.Status400BadRequest)) : Ok(Result);
         }
 
         [HttpPost("refresh")]
@@ -37,7 +38,7 @@ namespace Survey.Basket.Api.Controllers
         {
             var Result = await _authServices.GetRefreshTokenAsync(dto.Token,dto.RefreshToken, cancellation);
 
-            return Result is null ? BadRequest("Invalid Token") : Ok(Result);
+            return Result is null ? BadRequest(new ApiResponse(StatusCodes.Status400BadRequest)) : Ok(Result);
         }
 
         [HttpPost("revoced-refresh-token")]
@@ -45,7 +46,7 @@ namespace Survey.Basket.Api.Controllers
         {
             var Result = await _authServices.RevocedRefreshTokenAsync(dto.Token, dto.RefreshToken, cancellation);
 
-            return Result is false ? BadRequest("Opperation Failed") : Ok();
+            return Result is false ? BadRequest(new ApiResponse(StatusCodes.Status400BadRequest)) : Ok();
         }
 
 
