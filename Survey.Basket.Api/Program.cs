@@ -4,6 +4,7 @@ using Survey.Basket.Api.Data;
 using Survey.Basket.Api.Data.Entites;
 using Survey.Basket.Api.Extentions;
 using Survey.Basket.Api.Helper;
+using Survey.Basket.Api.Middlewares;
 using Survey.Basket.Api.Servises;
 using System.Configuration;
 
@@ -54,7 +55,11 @@ namespace Survey.Basket.Api
 
                 Logger.LogError(string.Empty, ex.Message);
             }
-           
+
+
+         //   app.UseMiddleware<ExceptionHandlerMiddleware>();  this Approache Before .net8
+
+            app.UseExceptionHandler();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -63,6 +68,9 @@ namespace Survey.Basket.Api
                 app.UseSwaggerUI();
             }
 
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");
+
+           
             app.UseHttpsRedirection();
 
             app.UseCors("ClientPolicy");

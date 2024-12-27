@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Survey.Basket.Api.Services.Jwt;
 using Survey.Basket.Api.Helper;
+using Survey.Basket.Api.Errors;
 
 namespace Survey.Basket.Api.Extentions
 {
@@ -60,6 +61,10 @@ namespace Survey.Basket.Api.Extentions
 
            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                   .AddFluentValidationAutoValidation();
+
+            services.AddExceptionHandler<GlobalExeptionHandler>();
+            services.AddProblemDetails();
+
         }
 
         public static void AddAuthServices(this IServiceCollection services,IConfiguration configuration)

@@ -90,6 +90,7 @@ namespace Survey.Basket.Api.Controllers
         [HttpPut("{id}/TogglePublish")]
         public async Task<ActionResult<Poll>> TogglePublish([FromRoute] int id, CancellationToken cancellation)
         {
+
             var result = await _service.TogglePublishAsync(id, cancellation);
             if (result)
                 return NoContent();
