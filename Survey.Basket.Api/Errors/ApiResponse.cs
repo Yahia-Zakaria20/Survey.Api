@@ -7,10 +7,12 @@ namespace Survey.Basket.Api.Error
 
         public string? Message { get; set; }
 
+        public static readonly  ApiResponse None = new ApiResponse(0,null);
+
         public ApiResponse(int code , string? massage = null )
         {
             StatusCode = code ;
-            Message = massage ?? GetDefultMassageForStatusCode(StatusCode) ;
+            Message = massage ?? GetDefultMassageForStatusCode(code) ;
         }
 
         private string? GetDefultMassageForStatusCode(int statusCode)
@@ -21,6 +23,7 @@ namespace Survey.Basket.Api.Error
                 401 => "Authorized, you are not",
                 404 => "Resource Was Not Found",
                 500 => "Internal Server Error",
+                409 => "Duplicated Resource",
                 _ => null
             };
         }

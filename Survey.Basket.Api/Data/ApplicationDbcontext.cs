@@ -40,7 +40,7 @@ namespace Survey.Basket.Api.Data
                 else if(entite.State == EntityState.Modified) 
                 {
                     entite.Property(e => e.UpdetedById).CurrentValue = UserId;
-                    entite.Property(e => e.UpdetedOn).CurrentValue = DateTime.UtcNow;
+                    entite.Property(e => e.UpdetedOn).CurrentValue = DateTime.Now;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);
